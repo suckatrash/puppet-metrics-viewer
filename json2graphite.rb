@@ -270,13 +270,14 @@ def influx_metrics(data, timestamp, parent_key = nil)
       tag_set = influx_tag_parser(temp_key)
       "#{tag_set} #{field_key}=#{field_value} #{timestamp.to_i}"
     when Array
-      next
+      #next
       temp_key = current_key.split(".")
       tag_set = influx_tag_parser(temp_key)
-      value.each do |metrics|
+      value.map do |metrics|
         #check if route-id
+        next unless metrics.key? "route-id"
         ot_tag=safe_name(metrics["route-id"])
-        metrics.each do |key, value|
+        metrics.map do |key, value|
           if value.is_a? Numeric
             "#{tag_set},route-id=#{ot_tag} #{key}=#{value} #{timestamp.to_i}"
           end
