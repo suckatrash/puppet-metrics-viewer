@@ -143,7 +143,7 @@ end
 end
 
 def insert_data(body, ip)
-  uri = URI.parse("http://#{ip}:8086/write?db=metrics_dashboard&precision=s")
+  uri = URI.parse("http://#{ip}:8086/write?db=pe_metrics&precision=s")
   puts uri
   request = Net::HTTP::Post.new(uri)
   request.body = body
@@ -270,6 +270,7 @@ def influx_metrics(data, timestamp, parent_key = nil)
       tag_set = influx_tag_parser(temp_key)
       "#{tag_set} #{field_key}=#{field_value} #{timestamp.to_i}"
     when Array
+      next
       temp_key = current_key.split(".")
       tag_set = influx_tag_parser(temp_key)
       value.each do |metrics|
