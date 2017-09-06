@@ -81,7 +81,6 @@ def parse_file(filename)
     end
   rescue Exception => e
     STDERR.puts "ERROR: #{filename}: #{e.message}"
-    #STDERR.puts "#{e.backtrace}"
   end
 end
 
@@ -138,12 +137,12 @@ def return_tag(a, n)
     if n > -1
       return_tag(a, n-1)
     else return "none"
+    end
   end
-end
 end
 
 def insert_data(body, ip)
-  uri = URI.parse("http://#{ip}:8086/write?db=metrics_dashboard&precision=s")
+  uri = URI.parse("http://#{ip}:8086/write?db=pe_metrics&precision=s")
   puts uri
   request = Net::HTTP::Post.new(uri)
   request.body = body
@@ -272,10 +271,11 @@ def influx_metrics(data, timestamp, parent_key = nil)
     when Array
       temp_key = current_key.split(".")
       tag_set = influx_tag_parser(temp_key)
-      value.each do |metrics|
+      value.map do |metrics|
         #check if route-id
+        next unless metrics.key? "route-id"
         ot_tag=safe_name(metrics["route-id"])
-        metrics.each do |key, value|
+        metrics.map do |key, value|
           if value.is_a? Numeric
             "#{tag_set},route-id=#{ot_tag} #{key}=#{value} #{timestamp.to_i}"
           end
