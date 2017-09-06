@@ -81,7 +81,6 @@ def parse_file(filename)
     end
   rescue Exception => e
     STDERR.puts "ERROR: #{filename}: #{e.message}"
-    #STDERR.puts "#{e.backtrace}"
   end
 end
 
@@ -270,7 +269,6 @@ def influx_metrics(data, timestamp, parent_key = nil)
       tag_set = influx_tag_parser(temp_key)
       "#{tag_set} #{field_key}=#{field_value} #{timestamp.to_i}"
     when Array
-      #next
       temp_key = current_key.split(".")
       tag_set = influx_tag_parser(temp_key)
       value.map do |metrics|
